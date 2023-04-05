@@ -23,11 +23,14 @@
                 const url = `https://npm-trends-proxy.uidotdev.workers.dev/npm/registry/${name}`;
                 const jj = await (await fetch(url)).json();
                 let rrr = jj["repository.url"];
+                console.log('xxxxxxxxxxxxxxxx', rrr);
+                // https://github.com/KyleAMathews/typefaces/tree/master/packages/montserrat
                 rrr = rrr.replace("git+https://", "https://");
                 rrr = rrr.replace("git://", "https://");
                 rrr = rrr.replace("git+ssh://git@", "https://");
                 rrr = rrr.replace(".git", "");
                 rrr = rrr.replace("https://github.com/", "");
+                rrr = rrr.replace("github.com/", "");
                 console.log(rrr);
                 return rrr;
             }
