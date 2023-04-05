@@ -24,13 +24,14 @@
                 const jj = await (await fetch(url)).json();
                 let rrr = jj["repository.url"];
                 console.log('xxxxxxxxxxxxxxxx', rrr);
-                // https://github.com/KyleAMathews/typefaces/tree/master/packages/montserrat
-                rrr = rrr.replace("git+https://", "https://");
-                rrr = rrr.replace("git://", "https://");
-                rrr = rrr.replace("git+ssh://git@", "https://");
-                rrr = rrr.replace(".git", "");
-                rrr = rrr.replace("https://github.com/", "");
-                rrr = rrr.replace("github.com/", "");
+                // Failing case git+https://github.com/emberjs/ember.js.git
+                // rrr = rrr.replace("git+https://", "https://");
+                // rrr = rrr.replace("git://", "https://");
+                // rrr = rrr.replace("git+ssh://git@", "https://");
+                // rrr = rrr.replace(".git", "");
+                // rrr = rrr.replace("https://github.com/", "");
+                // rrr = rrr.replace("github.com/", "");
+                rrr = rrr.match("github.com\/[^/.]*\/[^/.]*")[0].replace("github.com/", "");
                 console.log(rrr);
                 return rrr;
             }
