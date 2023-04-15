@@ -13,7 +13,6 @@ import {
 } from "@ionic/react";
 import { marked } from "marked";
 import markedLinkifyIt from "marked-linkify-it";
-import { Textillate } from "textillate-react";
 
 const FONT_NAME = "Jost";
 
@@ -42,9 +41,17 @@ async function getGithubUrlFromNpmPackageName(name): Promise<string> {
     return "";
   }
 
-  // Failinng case https://github.com/pugjs/pug/tree/master/packages/pug
-  rrr = rrr.match("(?<=github.com/).*?(?=((.git)?(#.*)?)$)");
-  return rrr[0];
+  // Failinng cases
+  // https://github.com/pugjs/pug/tree/master/packages/pug
+  // git@github.com:pirelenito/react-transition.git
+  let rrr2 = "";
+  try {
+    rrr2 = rrr.match("(?<=github.com/).*?(?=((.git)?(#.*)?)$)");
+    return rrr2[0];
+  } catch (error) {
+    console.log(rrr);
+    throw error;
+  }
 }
 
 async function getGithubRepoNamesFromNpmPackageNames(
