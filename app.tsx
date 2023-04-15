@@ -1,5 +1,5 @@
 import React from "react";
-import { IonSpinner, IonContent, IonInput } from "@ionic/react";
+import { IonSearchbar, IonSpinner, IonContent, IonInput } from "@ionic/react";
 import { marked } from "marked";
 import markedLinkifyIt from "marked-linkify-it";
 
@@ -59,6 +59,10 @@ export const App = () => {
   const [isExecuting, setIsexecuting] = React.useState<boolean>(false);
   const [resultUrl, setResultUrl] = React.useState<string>("about:blank");
 
+  React.useEffect(() => {
+    inputRef.current!.setFocus();
+  }, []);
+
   const appendOutput = (output: string) => {
     setMarkdownOutput((prev) => prev + "\n" + output);
   };
@@ -108,14 +112,13 @@ export const App = () => {
               generateReport();
             }}
           >
-            <IonInput
+            <IonSearchbar
               autofocus
               ref={inputRef}
-              label="Enter npm package name"
-              labelPlacement="floating"
-              fill="solid"
-              inputMode="text"
-            ></IonInput>
+              placeholder="Enter NPM package name"
+              debounce={500}
+              onIonInput={(event) => {}}
+            ></IonSearchbar>
           </form>
           <link
             rel="stylesheet"
