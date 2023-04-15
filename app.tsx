@@ -3,6 +3,8 @@ import { IonSpinner, IonContent, IonInput } from "@ionic/react";
 import { marked } from "marked";
 import markedLinkifyIt from "marked-linkify-it";
 
+const FONT_NAME = "Jost";
+
 marked.use(markedLinkifyIt({}, {}));
 
 async function getRelatedPackages(packageName: string) {
@@ -97,13 +99,15 @@ export const App = () => {
     <>
       <IonContent className="ion-padding">
         <>
+          <h1 style={{ fontFamily: FONT_NAME }}>
+            NPM Package Popularity Comparison
+          </h1>
           <form
             onSubmit={(event) => {
               event.preventDefault();
               generateReport();
             }}
           >
-            <h1>NPM Package Popularity Comparison</h1>
             <IonInput
               autofocus
               ref={inputRef}
@@ -113,7 +117,15 @@ export const App = () => {
               inputMode="text"
             ></IonInput>
           </form>
+          <link
+            rel="stylesheet"
+            href={`https://fonts.googleapis.com/css2?family=${FONT_NAME.replaceAll(
+              " ",
+              "+"
+            )}`}
+          ></link>
           <div
+            style={{ fontFamily: FONT_NAME }}
             dangerouslySetInnerHTML={{ __html: marked.parse(markdownOutput) }}
           ></div>
           {isExecuting && <IonSpinner name="dots"></IonSpinner>}
