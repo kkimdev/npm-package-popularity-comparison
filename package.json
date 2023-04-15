@@ -1,0 +1,17 @@
+{
+  "devDependencies": {
+    "@types/marked": "^4.0.8",
+    "@types/react": "^18.0.35",
+    "@vitejs/plugin-react": "^3.1.0",
+    "typescript": "^5.0.4",
+    "vite": "^4.2.1",
+    "vite-plugin-solid": "^2.7.0"
+  },
+  "dependencies": {
+    "@ionic/react": "^7.0.2",
+    "marked": "^4.3.0",
+    "marked-linkify-it": "^3.0.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
