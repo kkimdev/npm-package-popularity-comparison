@@ -1,11 +1,28 @@
 import React from "react";
-import { IonSearchbar, IonSpinner, IonContent, IonInput } from "@ionic/react";
+import {
+  IonList,
+  IonLabel,
+  IonItem,
+  IonSearchbar,
+  IonSpinner,
+  IonContent,
+  IonInput,
+  IonNote,
+  IonCard,
+  IonPopover,
+} from "@ionic/react";
 import { marked } from "marked";
 import markedLinkifyIt from "marked-linkify-it";
+import { Textillate } from "textillate-react";
 
 const FONT_NAME = "Jost";
 
 marked.use(markedLinkifyIt({}, {}));
+
+interface SearchSuggestion {
+  text: string;
+  description: string;
+}
 
 async function getRelatedPackages(packageName: string) {
   const r = await fetch(
@@ -53,11 +70,31 @@ function getStarHistoryImageUrl(package_names) {
   )}&type=Date`;
 }
 
+async function getNpmtrendsSearchSuggestions(
+  text: string
+): Promise<SearchSuggestion[]> {
+  const url = `https://npm-trends-proxy.uidotdev.workers.dev/npm/_suggest?source={%22autocomplete_suggest%22:{%22text%22:%22${text}%22,%22completion%22:{%22field%22:%22suggest%22,%22size%22:10}}}`;
+  const jj = await (await fetch(url)).json();
+  return jj["autocomplete_suggest"][0]["options"].map((entry) => {
+    return {
+      text: entry["text"],
+      description: entry["payload"]["description"],
+    };
+  });
+}
+
 export const App = () => {
   const inputRef = React.useRef<HTMLIonInputElement>(null);
-  const [markdownOutput, setMarkdownOutput] = React.useState<string>("");
+  const inputRef2 = React.useRef<HTMLFormElement>(null);
+  const searchSuggestionRef = React.useRef<HTMLIonPopoverElement>(null);
+  const [searchSuggestions, setSearchSuggestions] = React.useState<
+    SearchSuggestion[]
+  >([]);
   const [isExecuting, setIsexecuting] = React.useState<boolean>(false);
+  const [markdownOutput, setMarkdownOutput] = React.useState<string>("");
   const [resultUrl, setResultUrl] = React.useState<string>("about:blank");
+  const [isShowSuggestion, setIsShowSuggestion] =
+    React.useState<boolean>(false);
 
   React.useEffect(() => {
     inputRef.current!.setFocus();
@@ -101,12 +138,20 @@ export const App = () => {
 
   return (
     <>
+      <link
+        rel="stylesheet"
+        href={`https://fonts.googleapis.com/css2?family=${FONT_NAME.replaceAll(
+          " ",
+          "+"
+        )}`}
+      ></link>
       <IonContent className="ion-padding">
         <>
           <h1 style={{ fontFamily: FONT_NAME }}>
             NPM Package Popularity Comparison
           </h1>
           <form
+            ref={inputRef2}
             onSubmit={(event) => {
               event.preventDefault();
               generateReport();
@@ -116,17 +161,44 @@ export const App = () => {
               autofocus
               ref={inputRef}
               placeholder="Enter NPM package name"
-              debounce={500}
-              onIonInput={(event) => {}}
+              debounce={100}
+              onIonBlur={() => {
+                // setIsShowSuggestion(false);
+              }}
+              onIonFocus={() => {
+                setIsShowSuggestion(true);
+              }}
+              onIonInput={async (event) => {
+                const suggestions = await getNpmtrendsSearchSuggestions(
+                  event.detail.value as string
+                );
+                setIsShowSuggestion(true);
+                setSearchSuggestions(suggestions);
+                // searchSuggestionRef.current?.isOpen = true;
+              }}
             ></IonSearchbar>
           </form>
-          <link
-            rel="stylesheet"
-            href={`https://fonts.googleapis.com/css2?family=${FONT_NAME.replaceAll(
-              " ",
-              "+"
-            )}`}
-          ></link>
+          {isShowSuggestion && searchSuggestions.length > 0 && (
+            <IonCard>
+              <IonList>
+                {searchSuggestions.map((suggestion) => (
+                  <IonItem
+                    key={suggestion.text}
+                    button
+                    onClick={() => {
+                      inputRef.current!.value = suggestion.text;
+                      generateReport();
+                    }}
+                  >
+                    <IonLabel>
+                      <h2>{suggestion.text}</h2>
+                      <p>{suggestion.description}</p>
+                    </IonLabel>
+                  </IonItem>
+                ))}
+              </IonList>
+            </IonCard>
+          )}
           <div
             style={{ fontFamily: FONT_NAME }}
             dangerouslySetInnerHTML={{ __html: marked.parse(markdownOutput) }}
