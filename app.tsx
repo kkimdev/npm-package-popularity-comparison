@@ -106,6 +106,7 @@ export const App = () => {
 
   const generateReport = async () => {
     try {
+      setIsShowSuggestion(false);
       setIsexecuting(true);
       setMarkdownOutput("");
       setResultUrl("about:blank");
