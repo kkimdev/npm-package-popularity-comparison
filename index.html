@@ -1,69 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>My Website</title>
   </head>
   <body>
     <main>
-        <h1>Welcome to My Website</h1>
-        <input id="input">
-        <button id="button">Search</button>
-        <div id="result"></div>
-        <img id = "img" src=""></img>
-        <script>
-            const input = document.getElementById("input");
-            const button = document.getElementById("button");
-            const result = document.getElementById("result");
-            const img = document.getElementById("img");
-            
-            async function getGithubUrlFromNpmPackageName(name) {
-                const url = `https://npm-trends-proxy.uidotdev.workers.dev/npm/registry/${name}`;
-                const jj = await (await fetch(url)).json();
-                let rrr = jj["repository.url"];
-                console.log('xxxxxxxxxxxxxxxx', rrr);
-                // Failing case git+https://github.com/emberjs/ember.js.git
-                // rrr = rrr.replace("git+https://", "https://");
-                // rrr = rrr.replace("git://", "https://");
-                // rrr = rrr.replace("git+ssh://git@", "https://");
-                // rrr = rrr.replace(".git", "");
-                // rrr = rrr.replace("https://github.com/", "");
-                // rrr = rrr.replace("github.com/", "");
-                rrr = rrr.match("github.com\/[^/.]*\/[^/.]*")[0].replace("github.com/", "");
-                console.log(rrr);
-                return rrr;
-            }
+      <h1>Welcome to My Website</h1>
+      <input id="input" />
+      <button id="button">Search</button>
+      <div id="result"></div>
+      <script>
+        const input = document.getElementById("input");
+        const button = document.getElementById("button");
+        const result = document.getElementById("result");
+        const img = document.getElementById("img");
 
-            async function getStarHistoryUrl(package_names) {
-                return `https://star-history.com/#${package_names.join('&')}&Date`;
-            }
-            async function getStarHistoryImageUrl(package_names) {
-                return `https://api.star-history.com/svg?repos=${package_names.join(',')}&type=Date`;
-            }
-            button.addEventListener("click", async (event) => {
-                const r = await fetch(`https://npm-trends-proxy.uidotdev.workers.dev/s/related_packages?search_query%5B%5D=${input.value}&limit=10`);
-                const related_packages = await r.json();
-                related_packages.push(input.value);
+        async function getGithubUrlFromNpmPackageName(name) {
+          const url = `https://npm-trends-proxy.uidotdev.workers.dev/npm/registry/${name}`;
+          const jj = await (await fetch(url)).json();
+          let rrr = jj["repository.url"];
+          console.log("xxxxxxxxxxxxxxxx", rrr);
+          // Failing case git+https://github.com/emberjs/ember.js.git
+          rrr = rrr
+            .match("github.com\/[^/.]*\/[^/.]*")[0]
+            .replace("github.com/", "");
+          console.log(rrr);
+          return rrr;
+        }
 
-                let githubUrls = []
-                for (const related_package of related_packages) {
-                    console.log(related_package);
-                    const githubUrl = getGithubUrlFromNpmPackageName(related_package);
-                    githubUrls.push(githubUrl);
-                }
-                githubUrls = await Promise.all(githubUrls);
-                console.log(githubUrls);
-                const url = await getStarHistoryUrl(githubUrls);
-                result.innerText = url;
+        async function getStarHistoryUrl(package_names) {
+          return `https://star-history.com/#${package_names.join("&")}&Date`;
+        }
+        async function getStarHistoryImageUrl(package_names) {
+          return `https://api.star-history.com/svg?repos=${package_names.join(
+            ","
+          )}&type=Date`;
+        }
+        button.addEventListener("click", async (event) => {
+          const r = await fetch(
+            `https://npm-trends-proxy.uidotdev.workers.dev/s/related_packages?search_query%5B%5D=${input.value}&limit=10`
+          );
+          const related_packages = await r.json();
+          related_packages.push(input.value);
 
-                const imgUrl = await getStarHistoryImageUrl(githubUrls);
-                img.src = imgUrl;
-            })
-            
-            
-        </script>
+          let githubUrls = [];
+          for (const related_package of related_packages) {
+            console.log(related_package);
+            const githubUrl = getGithubUrlFromNpmPackageName(related_package);
+            githubUrls.push(githubUrl);
+          }
+          githubUrls = await Promise.all(githubUrls);
+          console.log(githubUrls);
+          const url = await getStarHistoryUrl(githubUrls);
+          result.innerText = url;
+
+          const imgUrl = await getStarHistoryImageUrl(githubUrls);
+          img.src = imgUrl;
+        });
+      </script>
     </main>
   </body>
 </html>
