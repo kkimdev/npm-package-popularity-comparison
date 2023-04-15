@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  IonSpinner,
-  IonContent,
-  IonInput,
-  IonButton,
-  IonApp,
-} from "@ionic/react";
+import { IonSpinner, IonContent, IonInput } from "@ionic/react";
 import { marked } from "marked";
 import markedLinkifyIt from "marked-linkify-it";
 
@@ -44,6 +38,9 @@ async function getGithubRepoNamesFromNpmPackageNames(
   return b;
 }
 
+function getNpmtrendsUrl(packageNames) {
+  return `https://npmtrends.com/${packageNames.join("-vs-")}`;
+}
 function getStarHistoryUrl(package_names) {
   return `https://star-history.com/#${package_names.join("&")}&Date`;
 }
@@ -60,7 +57,7 @@ export const App = () => {
   const [isExecuting, setIsexecuting] = React.useState<boolean>(false);
   const [resultUrl, setResultUrl] = React.useState<string>("about:blank");
 
-  const appendOutput2 = (output: string) => {
+  const appendOutput = (output: string) => {
     setMarkdownOutput((prev) => prev + "\n" + output);
   };
 
@@ -69,23 +66,27 @@ export const App = () => {
       setIsexecuting(true);
       setMarkdownOutput("");
       setResultUrl("about:blank");
-      appendOutput2(`1. Searching for "${inputRef.current!.value}"`);
+      appendOutput(`1. Searching for "${inputRef.current!.value}"`);
 
       const npmPackageNames = await getRelatedPackages(
         inputRef.current!.value as string
       );
-      appendOutput2(`1. Got related NPM package names: ${npmPackageNames}`);
+      appendOutput(`1. Got related NPM package names: ${npmPackageNames}`);
 
       const githubRepoNames = await getGithubRepoNamesFromNpmPackageNames(
         npmPackageNames
       );
-      appendOutput2(`1. Got Github repo names: ${githubRepoNames}`);
+      appendOutput(`1. Got Github repo names: ${githubRepoNames}`);
+
+      const npmtrendsUrl = getNpmtrendsUrl(npmPackageNames);
+      appendOutput(`1. NPM trends URL: ${npmtrendsUrl}`);
 
       const githubStarHistoryUrl = getStarHistoryUrl(githubRepoNames);
-      appendOutput2(`1. Github Star History URL: ${githubStarHistoryUrl}`);
+      appendOutput(`1. Github Star History URL: ${githubStarHistoryUrl}`);
+
       setResultUrl(githubStarHistoryUrl);
     } catch (error) {
-      appendOutput2(`Error encountered: ${error}`);
+      appendOutput(`Error encountered: ${error}`);
       throw error;
     } finally {
       setIsexecuting(false);
