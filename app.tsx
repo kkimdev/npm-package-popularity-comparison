@@ -46,11 +46,11 @@ async function getGithubUrlFromNpmPackageName(name): Promise<string> {
   // git@github.com:pirelenito/react-transition.git
   let rrr2 = "";
   try {
-    rrr2 = rrr.match("(?<=github.com/).*?(?=((.git)?(#.*)?)$)");
+    rrr2 = rrr.match("(?<=github.com[/|:]).*?(?=((.git)?(#.*)?)$)");
     return rrr2[0];
   } catch (error) {
-    console.log(rrr);
-    throw error;
+    console.error(rrr);
+    throw new Error(error + " " + rrr);
   }
 }
 
