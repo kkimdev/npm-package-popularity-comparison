@@ -49,7 +49,7 @@ async function getGithubUrlFromNpmPackageName(name): Promise<string> {
     rrr2 = rrr.match("(?<=github.com[/|:]).*?(?=((.git)?(#.*)?)$)");
     return rrr2[0];
   } catch (error) {
-    console.error(rrr);
+    console.error("repository.url parsing fail: " + rrr);
     throw new Error(error + " " + rrr);
   }
 }
