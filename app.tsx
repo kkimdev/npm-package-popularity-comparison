@@ -41,15 +41,30 @@ async function getGithubUrlFromNpmPackageName(name): Promise<string> {
     return "";
   }
 
+  // Succeeding cases
+  // https://github.com/Popmotion/popmotion/tree/master/packages/popmotion
+  // git+https://github.com/thednp/kute.js.git
+  // https://github.com/ThrivingKings/animo/tree/master/packages/animo
+  // git+https://github.com/tjunghans/react-blotter.git
+  // git+https://github.com/twitter-fabric/velocity-react.git
+  // https://github.com/pugjs/pug/tree/master/packages/pug
+  //
   // Failinng cases
   // https://github.com/pugjs/pug/tree/master/packages/pug
   // git@github.com:pirelenito/react-transition.git
+  //
+  // Testbed: https://regex101.com/
   let rrr2 = "";
   try {
-    rrr2 = rrr.match("(?<=github.com[/|:]).*?(?=((.git)?(#.*)?)$)");
-    return rrr2[0];
+    console.log(rrr);
+    if (rrr.includes(":")) {
+      rrr2 = rrr.match("(?<=github.com[/|:]).*?(?=((.git)?(#.*)?)$)");
+      return rrr2[0];
+    } else {
+      return rrr;
+    }
   } catch (error) {
-    console.error("repository.url parsing fail: " + rrr);
+    console.error("repository.url parsing fail: " + url + " " + rrr);
     throw new Error(error + " " + rrr);
   }
 }
