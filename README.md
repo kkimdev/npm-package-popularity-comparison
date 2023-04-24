@@ -2,6 +2,13 @@
 
 https://kkimdev.github.io/npm-package-popularity-comparison/dist/
 
+# Commands
+
+```
+vite --host
+vite build
+```
+
 ## TODO
 
 - Fix failing Github URLs (see app.tsx)
