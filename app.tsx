@@ -25,7 +25,7 @@ interface SearchSuggestion {
 
 async function getRelatedPackages(packageName: string) {
   const r = await fetch(
-    `https://npm-trends-proxy.uidotdev.workers.dev/s/related_packages?search_query%5B%5D=${packageName}&limit=10`
+    `https://npm-trends-proxy.uidotdev.workers.dev/s/related_packages?search_query%5B%5D=${packageName}&limit=5`
   );
   const related_packages = await r.json();
   related_packages.push(packageName);
